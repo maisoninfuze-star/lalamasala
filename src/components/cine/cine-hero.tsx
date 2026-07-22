@@ -20,10 +20,11 @@ export function CineHero() {
   const [motionVideo, setMotionVideo] = useState(false);
 
   useEffect(() => {
+    // Play the hero video on every screen size (it's only ~2 MB — barely more
+    // than the fallback still). Skip it only for reduced-motion or data-saver.
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
     const conn = (navigator as { connection?: { saveData?: boolean } }).connection;
-    setMotionVideo(!reduce && isDesktop && !conn?.saveData);
+    setMotionVideo(!reduce && !conn?.saveData);
     if (reduce) return;
 
     // Parallax: spices drift up + slightly out of focus as you scroll away.

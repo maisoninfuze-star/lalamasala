@@ -82,8 +82,8 @@ export function PhoneReel() {
           </Parallax>
 
           {/* iPhone + socials */}
-          <div className="relative z-10 flex flex-col items-center gap-5">
-          <div className="relative h-[540px] w-[270px] rounded-[2.6rem] border border-[color:var(--border)] bg-black p-2 shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] sm:h-[560px] sm:w-[280px]">
+          <div className="relative z-10 flex shrink-0 flex-col items-center gap-4 sm:gap-5">
+          <div className="relative h-[480px] w-[240px] rounded-[2.6rem] border border-[color:var(--border)] bg-black p-2 shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] sm:h-[560px] sm:w-[280px]">
             <div className="relative h-full w-full overflow-hidden rounded-[2.1rem] bg-[color:var(--surface-2)]">
               {REELS.map((r, idx) => (
                 // eslint-disable-next-line jsx-a11y/media-has-caption
