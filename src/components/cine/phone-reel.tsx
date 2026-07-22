@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Heart, MessageCircle, Send, Bookmark, Plus, SlidersHorizontal } from "lucide-react";
+import { Heart, MessageCircle, Send, Bookmark, Plus, SlidersHorizontal, Volume2, VolumeX } from "lucide-react";
 import { SectionMarker } from "./hud";
 import { Parallax } from "./parallax";
+import { InstagramIcon, FacebookIcon } from "@/components/ui/social-icons";
+import { BRAND } from "@/data/brand";
 
 /*
   "Street-food reels" — a PINNED, scroll-driven section (mirrors the reference's
@@ -22,6 +24,7 @@ export function PhoneReel() {
   const sectionRef = useRef<HTMLElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [i, setI] = useState(0);
+  const [muted, setMuted] = useState(true);
 
   // Drive the active reel from scroll progress through the pinned section.
   useEffect(() => {
@@ -47,14 +50,16 @@ export function PhoneReel() {
     };
   }, []);
 
-  // Play only the active reel.
+  // Play only the active reel; sound follows the user's mute toggle (set
+  // imperatively — React doesn't reliably sync the `muted` attribute).
   useEffect(() => {
     videoRefs.current.forEach((v, idx) => {
       if (!v) return;
+      v.muted = muted || idx !== i;
       if (idx === i) v.play().catch(() => {});
       else v.pause();
     });
-  }, [i]);
+  }, [i, muted]);
 
   const reel = REELS[i];
 
@@ -76,8 +81,9 @@ export function PhoneReel() {
             Street Food
           </Parallax>
 
-          {/* iPhone */}
-          <div className="relative z-10 h-[560px] w-[280px] rounded-[2.6rem] border border-[color:var(--border)] bg-black p-2 shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]">
+          {/* iPhone + socials */}
+          <div className="relative z-10 flex flex-col items-center gap-5">
+          <div className="relative h-[540px] w-[270px] rounded-[2.6rem] border border-[color:var(--border)] bg-black p-2 shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] sm:h-[560px] sm:w-[280px]">
             <div className="relative h-full w-full overflow-hidden rounded-[2.1rem] bg-[color:var(--surface-2)]">
               {REELS.map((r, idx) => (
                 // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -105,6 +111,18 @@ export function PhoneReel() {
                 <span className="opacity-50">Following</span>
                 <SlidersHorizontal className="size-4 opacity-80" />
               </div>
+
+              {/* Sound toggle — unmutes the active reel (tap = user gesture, so
+                  browsers allow audio). */}
+              <button
+                type="button"
+                onClick={() => setMuted((m) => !m)}
+                aria-label={muted ? "Turn sound on" : "Turn sound off"}
+                aria-pressed={!muted}
+                className="absolute right-3 top-12 z-10 grid size-9 place-items-center rounded-full bg-black/55 text-white backdrop-blur-sm transition-colors hover:bg-black/75"
+              >
+                {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+              </button>
 
               <div className="absolute bottom-24 right-3 flex flex-col items-center gap-4 text-white">
                 {[
@@ -134,6 +152,37 @@ export function PhoneReel() {
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* Follow us */}
+          <div className="flex items-center gap-3">
+            <a
+              href={BRAND.social.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Lala Masala on Instagram — ${BRAND.social.instagramHandle}`}
+              className="grid size-11 place-items-center rounded-full border border-[color:var(--border)] text-[color:var(--foreground)] transition-colors hover:border-[color:var(--lm-marigold)]/60 hover:text-[color:var(--lm-marigold)]"
+            >
+              <InstagramIcon className="size-5" />
+            </a>
+            <a
+              href={BRAND.social.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Lala Masala on Facebook"
+              className="grid size-11 place-items-center rounded-full border border-[color:var(--border)] text-[color:var(--foreground)] transition-colors hover:border-[color:var(--lm-marigold)]/60 hover:text-[color:var(--lm-marigold)]"
+            >
+              <FacebookIcon className="size-5" />
+            </a>
+            <a
+              href={BRAND.social.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hud transition-colors hover:text-[color:var(--lm-marigold)]"
+            >
+              {BRAND.social.instagramHandle} — follow along
+            </a>
+          </div>
           </div>
         </div>
       </div>
