@@ -1,26 +1,718 @@
 @import "tailwindcss";
 
+/*
+  ============================================================================
+  LALA MASALA — DESIGN SYSTEM
+  ----------------------------------------------------------------------------
+  All brand primitives live here as CSS custom properties so they can be
+  overridden at runtime (e.g. from admin theme settings) without a rebuild.
+  Tailwind v4 maps them into utilities via the @theme block below.
+  ============================================================================
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- Brand palette (editable design tokens) --- */
+  --lm-burgundy: #6b1026; /* deep masala burgundy — primary */
+  --lm-wine: #3b0715; /* rich wine — darkest surface */
+  --lm-saffron: #d59a35; /* saffron gold — accent */
+  --lm-turmeric: #e3b04b; /* warm turmeric — highlight */
+  --lm-cream: #f7f0e3; /* soft cream — muted surface */
+  --lm-ivory: #fff9f0; /* warm ivory — base surface */
+  --lm-charcoal: #1d1917; /* charcoal — ink */
+  --lm-clay: #a65b43; /* muted clay — secondary warm */
+
+  /* --- Logo palette (marigold saffron / plum / crimson on cream) ---
+     Sampled from the Lala Masala emblem so the site reads as one family
+     with the mark. Used as accents across the brand story pages. */
+  --lm-marigold: #efa82e; /* logo background saffron-marigold */
+  --lm-plum: #6e2a5e; /* logo wordmark plum */
+  --lm-plum-deep: #2a1022; /* darkened plum for panels on the dark theme */
+  --lm-crimson: #c0392b; /* logo border crimson */
+
+  /* Tints & supporting neutrals derived from the palette */
+  --lm-burgundy-700: #560c1e;
+  --lm-saffron-soft: #e9cd8f;
+  --lm-cream-200: #efe6d2;
+  --lm-line: #e4d8c2; /* hairline on cream */
+  --lm-line-dark: rgba(255, 249, 240, 0.14); /* hairline on burgundy */
+  --lm-muted-ink: #6d5f52; /* secondary text on light */
+
+  /* --- Semantic surface tokens (light context, the default) --- */
+  --background: var(--lm-ivory);
+  --foreground: var(--lm-charcoal);
+  --surface: var(--lm-ivory);
+  --surface-muted: var(--lm-cream);
+  --surface-contrast: var(--lm-burgundy);
+  --primary: var(--lm-burgundy);
+  --primary-foreground: var(--lm-ivory);
+  --accent: var(--lm-saffron);
+  --accent-foreground: var(--lm-charcoal);
+  --muted-foreground: var(--lm-muted-ink);
+  --border: var(--lm-line);
+  --ring: var(--lm-saffron);
+
+  /* --- Radii --- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* --- Elevation (restrained, warm-tinted — never heavy) --- */
+  --shadow-sm: 0 1px 2px rgba(29, 25, 23, 0.06);
+  --shadow: 0 12px 30px -18px rgba(59, 7, 21, 0.28);
+  --shadow-lg: 0 40px 80px -40px rgba(59, 7, 21, 0.42);
+
+  /* --- Motion --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --header-h: 76px;
+  --container: 1240px;
+}
+
+/* Burgundy / inverted context: apply to any dark section wrapper. */
+.on-dark,
+[data-theme="dark"] {
+  --background: var(--lm-burgundy);
+  --foreground: var(--lm-ivory);
+  --surface: var(--lm-burgundy);
+  --surface-muted: var(--lm-burgundy-700);
+  --surface-contrast: var(--lm-ivory);
+  --primary: var(--lm-saffron);
+  --primary-foreground: var(--lm-wine);
+  --muted-foreground: rgba(255, 249, 240, 0.72);
+  --border: var(--lm-line-dark);
+  --ring: var(--lm-turmeric);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  --color-burgundy: var(--lm-burgundy);
+  --color-wine: var(--lm-wine);
+  --color-saffron: var(--lm-saffron);
+  --color-turmeric: var(--lm-turmeric);
+  --color-cream: var(--lm-cream);
+  --color-ivory: var(--lm-ivory);
+  --color-charcoal: var(--lm-charcoal);
+  --color-clay: var(--lm-clay);
+  --color-marigold: var(--lm-marigold);
+  --color-plum: var(--lm-plum);
+  --color-crimson: var(--lm-crimson);
+
+  --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
+
+  --shadow-soft: var(--shadow);
+  --shadow-float: var(--shadow-lg);
+
+  --ease-out: var(--ease-out);
+
+  /* Fluid editorial type scale */
+  --text-display: clamp(2.75rem, 6.5vw, 6.25rem);
+  --text-h1: clamp(2.25rem, 4.6vw, 4rem);
+  --text-h2: clamp(1.75rem, 3vw, 2.75rem);
+  --text-h3: clamp(1.35rem, 1.8vw, 1.75rem);
+  --text-eyebrow: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
   }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv01";
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  /* Prices, quantities and order data stay in the clear sans typeface. */
+  .tnum {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  ::selection {
+    background: var(--lm-saffron);
+    color: var(--lm-wine);
+  }
+
+  /* Accessible, visible focus for keyboard users only. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  a { color: inherit; text-decoration: none; }
 }
 
-body {
+@layer components {
+  .lm-container {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 5vw, 3.5rem);
+  }
+
+  /* Small uppercase label used above headings. */
+  .lm-eyebrow {
+    font-family: var(--font-sans);
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .lm-eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  .lm-hairline { height: 1px; background: var(--border); border: 0; }
+
+  /* Primary button — solid burgundy / saffron on dark. */
+  .lm-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    padding: 0.95rem 1.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    transition: transform 0.4s var(--ease-out), background-color 0.3s, box-shadow 0.3s;
+    will-change: transform;
+  }
+  .lm-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .lm-btn:active { transform: translateY(0); }
+
+  .lm-btn-ghost {
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--border);
+  }
+  .lm-btn-ghost:hover { background: color-mix(in srgb, var(--foreground) 6%, transparent); }
+
+  /* Reveal-on-scroll primitive (paired with IntersectionObserver hook). */
+  .lm-reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  }
+  .lm-reveal[data-shown="true"] { opacity: 1; transform: none; }
+}
+
+/* Respect reduced-motion across the board. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .lm-reveal { opacity: 1; transform: none; }
+  .blur-reveal { filter: none !important; opacity: 1 !important; transform: none !important; }
+}
+
+/*
+  ============================================================================
+  CINEMATIC SCOPE — the public site's dark "film-reel" theme.
+  Scoped to .cine so the admin keeps its light cream theme untouched.
+  ============================================================================
+*/
+/* Lenis smooth-scroll baseline (see components/cine/smooth-scroll.tsx). */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+.cine {
+  --background: #150309;      /* near-black wine */
+  --surface: #150309;
+  --surface-2: #1f0710;       /* raised panel */
+  --foreground: #f7f0e3;      /* cream ink */
+  --muted-foreground: rgba(247, 240, 227, 0.52);
+  --faint: rgba(247, 240, 227, 0.32);
+  --accent: var(--lm-saffron);
+  --border: rgba(247, 240, 227, 0.12);
+  --hud: rgba(247, 240, 227, 0.40);
+
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+@layer components {
+  /* Monospace HUD micro-label, e.g. "(01) — SELECTED WORK" */
+  .hud {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hud);
+    font-weight: 400;
+  }
+
+  /* The thin top rule of a section with center crosshair + end ticks. */
+  .hud-rule {
+    position: relative;
+    height: 1px;
+    background: var(--border);
+  }
+  .hud-rule::before,
+  .hud-rule::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    width: 1px;
+    height: 7px;
+    background: var(--border);
+  }
+  .hud-rule::before { left: 0; }
+  .hud-rule::after { right: 0; }
+  .hud-cross {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 9px;
+    height: 9px;
+    translate: -50% -50%;
+    color: var(--faint);
+  }
+  .hud-cross::before,
+  .hud-cross::after {
+    content: "";
+    position: absolute;
+    background: currentColor;
+  }
+  .hud-cross::before { left: 50%; top: 0; width: 1px; height: 100%; translate: -50% 0; }
+  .hud-cross::after { top: 50%; left: 0; height: 1px; width: 100%; translate: 0 -50%; }
+
+  /* A dense tick ruler used above stat rows / near the footer. */
+  .hud-ticks {
+    height: 10px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--border) 0,
+      var(--border) 1px,
+      transparent 1px,
+      transparent 28px
+    );
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+  }
+
+  /* Camera-viewfinder corner brackets wrapper. */
+  .viewfinder { position: relative; }
+  .viewfinder::before,
+  .viewfinder::after,
+  .viewfinder > .vf-b::before,
+  .viewfinder > .vf-b::after {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .viewfinder::before { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+  .viewfinder::after { top: 10px; right: 10px; border-left: 0; border-bottom: 0; }
+  .viewfinder > .vf-b::before { bottom: 10px; left: 10px; border-right: 0; border-top: 0; }
+  .viewfinder > .vf-b::after { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
+
+  /* Warm glow blooms bleeding between sections. */
+  .cine-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.5;
+    pointer-events: none;
+    background: radial-gradient(circle, var(--lm-clay), transparent 70%);
+  }
+
+  /* Giant background wordmark sitting behind content. */
+  .backdrop-word {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(247, 240, 227, 0.10);
+    user-select: none;
+  }
+
+  /* Two-tone display heading: emphasised words get .lead. */
+  .display {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+    color: var(--muted-foreground);
+    text-wrap: balance;
+  }
+  .display .lead { color: var(--foreground); }
+
+  /* Editorial serif display (Fraunces) — heritage warmth for the story pages.
+     Two-tone like .display: emphasised words get .lead. */
+  .display-serif {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    color: var(--muted-foreground);
+    text-wrap: balance;
+  }
+  .display-serif .lead { color: var(--foreground); }
+
+  /* Warm italic pull-quote (Fraunces italic) for the motto / vision. */
+  .quote-serif {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.18;
+    color: var(--foreground);
+    text-wrap: balance;
+  }
+
+  /* Heritage panel: a deep-plum band (logo plum) with a marigold hairline,
+     used to set the family-story sections apart from the near-black base. */
+  .plum-panel {
+    position: relative;
+    background:
+      radial-gradient(120% 90% at 12% 0%, color-mix(in srgb, var(--lm-plum) 42%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--lm-plum-deep), color-mix(in srgb, var(--lm-plum-deep) 60%, var(--background)));
+    border-block: 1px solid color-mix(in srgb, var(--lm-marigold) 26%, transparent);
+  }
+
+  /* Marigold-forward eyebrow accent for the story pages (warmer than saffron). */
+  .accent-marigold { color: var(--lm-marigold); }
+  .rule-crimson { background: color-mix(in srgb, var(--lm-crimson) 70%, transparent); }
+
+  /* Blur-in reveal (the reference's signature). Toggled by data-shown. */
+  /* Initial (pre-JS) hidden state. The scrub controller then drives
+     filter/opacity/transform inline every frame — no CSS transition here,
+     or it would smear the scrubbed updates. */
+  .blur-reveal {
+    filter: blur(14px);
+    opacity: 0.04;
+    transform: translateY(34px) scale(1.06);
+  }
+
+  /* Interactive rows (menu/offering/order) get a smooth hover shift. */
+  .cine a,
+  .cine button { transition: color 0.3s var(--ease-out); }
+  .row-hover { transition: padding-left 0.4s var(--ease-out), background-color 0.4s; }
+  .row-hover:hover { padding-left: 0.75rem; background-color: color-mix(in srgb, var(--foreground) 3%, transparent); }
+
+  /* Infinite marquee ticker (duplicated track → seamless -50% loop). */
+  .lm-marquee { position: relative; overflow: hidden; }
+  .lm-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: lmMarquee var(--marquee-dur, 34s) linear infinite;
+  }
+  .lm-marquee:hover .lm-marquee-track { animation-play-state: paused; }
+  @keyframes lmMarquee { to { transform: translateX(-50%); } }
+
+  /* Cursor spotlight: a warm radial glow that follows the pointer. */
+  .lm-spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out);
+    background: radial-gradient(
+      340px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--lm-saffron) 22%, transparent),
+      transparent 60%
+    );
+  }
+  .lm-spotlight[data-active="true"] { opacity: 1; }
+
+  /* First-visit location gate — gentle entrance. */
+  .lm-gate { animation: lmGateIn 0.5s var(--ease-out) both; }
+  .lm-gate > div { animation: lmGateUp 0.6s var(--ease-out) both; }
+  @keyframes lmGateIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes lmGateUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  /* ===================================================================
+     STORYBOOK — the interactive "family recipe book" on the About page.
+     Cream paper leaves that turn in 3D on desktop; a swipeable single-page
+     reader on mobile; a plain stacked list for SSR / no-JS / crawlers.
+     =================================================================== */
+  .storybook {
+    --paper: #f3e6cc;
+    --paper-hi: #fcf5e5;
+    --ink: #2c1b12;
+    --ink-soft: #8a7358;
+    --gold: #bd7d1b;
+    --plum: #6e2a5e;
+    --crimson: #b23124;
+  }
+
+  .sb-book {
+    position: relative;
+    width: min(960px, 94vw);
+    aspect-ratio: 3 / 2;
+    margin-inline: auto;
+    perspective: 2600px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .sb-book::after {
+    content: "";
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: -7%;
+    height: 11%;
+    background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), transparent 76%);
+    filter: blur(10px);
+    z-index: -1;
+  }
+
+  .sb-leaf {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform 0.95s cubic-bezier(0.2, 0.72, 0.16, 1);
+    will-change: transform;
+  }
+  .sb-leaf.flip { transform: rotateY(-180deg); }
+
+  .sb-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 12px 44px -20px rgba(0, 0, 0, 0.65);
+  }
+  .sb-face.back { transform: rotateY(180deg); }
+
+  /* Cream "paper" leaf. NB: gradient must be radial — linear-gradient does not
+     accept an `at <position>`, and Lightning CSS drops the whole rule if it is. */
+  .sb-page {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.15rem, 2.3vw, 2.4rem);
+    background: radial-gradient(135% 135% at 100% 0%, var(--paper-hi) 0%, var(--paper) 100%);
+    color: var(--ink);
+  }
+  /* soft shade near the spine (works for both faces via the leaf flip) */
+  .sb-page::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 15%;
+    background: linear-gradient(90deg, rgba(58, 20, 8, 0.16), transparent);
+    pointer-events: none;
+  }
+  /* faint paper grain */
+  .sb-page::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(120, 80, 40, 0.05) 1px, transparent 1px);
+    background-size: 4px 4px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .sb-page.cover {
+    background: radial-gradient(140% 130% at 0% 0%, #7c3168, #3a1330 72%);
+    color: #f0e7d3;
+  }
+  .sb-page.cover::before,
+  .sb-page.cover::after { display: none; }
+  .sb-cover-frame {
+    position: absolute;
+    inset: 13px;
+    border: 1px solid rgba(239, 168, 46, 0.55);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .sb-cover-frame::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(192, 57, 43, 0.4);
+    border-radius: 3px;
+  }
+
+  .sb-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .sb-h {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.02;
+    color: var(--plum);
+  }
+  .sb-text {
+    font-family: var(--font-sans);
+    font-size: clamp(0.82rem, 1.05vw, 0.97rem);
+    line-height: 1.62;
+    color: #4a3625;
+  }
+  .sb-quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    line-height: 1.22;
+    color: var(--ink);
+  }
+  .sb-rule { height: 1px; background: linear-gradient(90deg, var(--gold), transparent); }
+  .sb-figure {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px;
+    background: #e7d7b8;
+    box-shadow: 0 10px 26px -16px rgba(60, 25, 10, 0.6);
+  }
+  .sb-folio {
+    margin-top: auto;
+    padding-top: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  /* Controls */
+  .sb-arrow {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--foreground);
+    transition: background-color 0.3s, opacity 0.3s, transform 0.3s var(--ease-out);
+  }
+  .sb-arrow:hover:not(:disabled) { background: color-mix(in srgb, var(--foreground) 8%, transparent); }
+  .sb-arrow:active:not(:disabled) { transform: scale(0.94); }
+  .sb-arrow:disabled { opacity: 0.25; cursor: not-allowed; }
+  .sb-dots { display: flex; gap: 0.42rem; }
+  .sb-dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: var(--faint);
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  .sb-dot.on { background: var(--lm-marigold); transform: scale(1.3); }
+
+  /* Mobile reader */
+  .sb-reader {
+    position: relative;
+    width: min(400px, 90vw);
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    touch-action: pan-y;
+  }
+  .sb-track { display: flex; transition: transform 0.5s var(--ease-out); }
+  .sb-card { position: relative; flex: 0 0 100%; aspect-ratio: 3 / 4; overflow: hidden; }
+  /* On phones a page can be text-heavy; let it scroll inside the card rather
+     than clip (the card keeps its shape; the swipe still works — swipe reads
+     horizontal delta only). */
+  .sb-reader .sb-page { overflow-y: auto; overscroll-behavior: contain; }
+
+  /* SSR / no-JS stacked fallback */
+  .sb-stack {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .sb-stack .sb-page { position: relative; inset: auto; }
+
+  /* Saffron pill CTA used in the floating dock. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.7rem 1.15rem;
+    border-radius: var(--radius-pill);
+    background: var(--lm-saffron);
+    color: var(--lm-wine);
+    transition: transform 0.4s var(--ease-out), background-color 0.3s;
+  }
+  .pill:hover { transform: translateY(-1px); background: var(--lm-turmeric); }
 }

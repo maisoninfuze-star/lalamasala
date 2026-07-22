@@ -36,6 +36,15 @@ yarn-error.log*
 # vercel
 .vercel
 
+# owner dashboard content overrides + uploaded photos (dev-local persistence)
+/content-store.json
+/public/img/uploads
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/inquiries.json
+
+# local working files (not site assets)
+/Butter chicken example
+/CamScanner*.pdf
