@@ -483,6 +483,36 @@ html.lenis body { height: auto; }
   }
   .lm-spotlight[data-active="true"] { opacity: 1; }
 
+  /* Opening splash: emblem in → marigold rule sweep → overlay dissolves. */
+  .lm-intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: #150309;
+    animation: lmIntroOut 0.65s var(--ease-out) 1.6s forwards;
+  }
+  .lm-intro-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+    animation: lmIntroIn 0.9s var(--ease-out) both;
+  }
+  .lm-intro-rule {
+    height: 1px;
+    width: 0;
+    background: var(--lm-marigold);
+    animation: lmIntroRule 0.8s var(--ease-out) 0.55s forwards;
+  }
+  @keyframes lmIntroIn {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes lmIntroRule { to { width: 76px; } }
+  @keyframes lmIntroOut { to { opacity: 0; visibility: hidden; } }
+
   /* First-visit location gate — gentle entrance. */
   .lm-gate { animation: lmGateIn 0.5s var(--ease-out) both; }
   .lm-gate > div { animation: lmGateUp 0.6s var(--ease-out) both; }

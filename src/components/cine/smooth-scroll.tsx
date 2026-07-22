@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 
 /*
@@ -9,6 +10,9 @@ import Lenis from "lenis";
   Disabled under prefers-reduced-motion (falls back to native scrolling).
 */
 export function SmoothScroll() {
+  const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -18,6 +22,9 @@ export function SmoothScroll() {
       smoothWheel: true,
       touchMultiplier: 1.6,
     });
+    lenisRef.current = lenis;
+    // Exposed for debugging / test automation.
+    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
 
     let raf = 0;
     const loop = (time: number) => {
@@ -29,8 +36,17 @@ export function SmoothScroll() {
     return () => {
       cancelAnimationFrame(raf);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, []);
+
+  // Every page must open at the top. Next resets window scroll on navigation,
+  // but Lenis keeps its own internal position and would snap back on the first
+  // wheel tick — reset it explicitly whenever the route changes.
+  useEffect(() => {
+    lenisRef.current?.scrollTo(0, { immediate: true, force: true });
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return null;
 }

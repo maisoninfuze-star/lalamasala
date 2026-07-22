@@ -87,11 +87,6 @@ export function CineHero() {
       {/* Warm cursor spotlight */}
       <Spotlight />
 
-      {/* HUD corner label */}
-      <div className="lm-container relative z-10 pt-28">
-        <span className="hud">(00) — Lala Masala · Est. MMXX</span>
-      </div>
-
       {/* Bottom content */}
       <div ref={contentRef} className="lm-container relative z-10 pb-24 will-change-transform">
         <h1 className="display max-w-4xl text-[clamp(2.75rem,8vw,7rem)]">
